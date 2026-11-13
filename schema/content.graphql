@@ -1,0 +1,95 @@
+type Query {
+  "Посты и цитаты: поиск по заголовку/тексту/тегам, фильтры, сортировка, пагинация"
+  posts(search: String, filter: PostFilter, sort: PostSort = LIKES, dir: SortDir = DESC, page: Int = 1, pageSize: Int = 20): PostPage!
+  post(id: ID!): Post
+  comments(search: String, postId: ID, page: Int = 1, pageSize: Int = 20): CommentPage!
+  "Популярные теги"
+  tags(limit: Int = 30): [Bucket!]!
+  contentStats: ContentStats!
+}
+
+type Mutation {
+  createPost(input: CreatePostInput!): Post!
+  likePost(id: ID!): Post!
+  deletePost(id: ID!): Boolean!
+  addComment(postId: ID!, body: String!, authorId: ID): Comment!
+}
+
+enum PostKind {
+  POST
+  QUOTE
+}
+
+enum PostSort {
+  TITLE
+  LIKES
+  VIEWS
+  COMMENTS
+}
+
+input PostFilter {
+  source: Source
+  kind: PostKind
+  tag: String
+  authorId: ID
+  minLikes: Int
+}
+
+input CreatePostInput {
+  title: String!
+  body: String!
+  tags: [String!] = []
+  authorId: ID!
+}
+
+type Post @key(fields: "id") {
+  id: ID!
+  source: Source!
+  kind: PostKind!
+  title: String!
+  body: String!
+  tags: [String!]!
+  likes: Int!
+  views: Int!
+  "Автор приходит из сервиса users (федерация)"
+  author: User
+  commentsCount: Int!
+  comments(page: Int = 1, pageSize: Int = 5): CommentPage!
+}
+
+type Comment {
+  id: ID!
+  source: Source!
+  body: String!
+  likes: Int!
+  authorName: String
+  author: User
+  post: Post!
+}
+
+"""
+Сервис content расширяет пользователя из сервиса users его постами.
+Поля nullable: если content недоступен, шлюз вернёт пользователей без постов (частичный ответ).
+"""
+type User @key(fields: "id") {
+  id: ID!
+  postsCount: Int
+  posts(sort: PostSort = LIKES, dir: SortDir = DESC, page: Int = 1, pageSize: Int = 5): PostPage
+}
+
+type PostPage {
+  items: [Post!]!
+  pageInfo: PageInfo!
+}
+
+type CommentPage {
+  items: [Comment!]!
+  pageInfo: PageInfo!
+}
+
+type ContentStats {
+  posts: Int!
+  comments: Int!
+  bySource: [Bucket!]!
+  byKind: [Bucket!]!
+}

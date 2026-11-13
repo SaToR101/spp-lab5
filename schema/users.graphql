@@ -1,0 +1,97 @@
+type Query {
+  "Пользователи: поиск по имени/email/городу, фильтры, сортировка, пагинация"
+  users(search: String, filter: UserFilter, sort: UserSort = NAME, dir: SortDir = ASC, page: Int = 1, pageSize: Int = 20): UserPage!
+  user(id: ID!): User
+  countries(search: String, region: String, sort: CountrySort = NAME, dir: SortDir = ASC, page: Int = 1, pageSize: Int = 20): CountryPage!
+  country(code: ID!): Country
+  regions: [String!]!
+  userStats: UserStats!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum UserSort {
+  NAME
+  AGE
+  REGISTERED_AT
+}
+
+enum CountrySort {
+  NAME
+  AREA
+  USERS
+}
+
+input UserFilter {
+  source: Source
+  gender: Gender
+  countryCode: String
+  minAge: Int
+  maxAge: Int
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  gender: Gender
+  age: Int
+  countryCode: String
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  source: Source!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  email: String!
+  gender: Gender
+  age: Int
+  city: String
+  avatar: String
+  registeredAt: String
+  country: Country
+}
+
+type Country @key(fields: "code") {
+  code: ID!
+  name: String!
+  officialName: String!
+  region: String!
+  subregion: String
+  capital: String
+  area: Float
+  languages: [String!]!
+  currencies: [String!]!
+  flag: String
+  usersCount: Int!
+  users(sort: UserSort = NAME, dir: SortDir = ASC, page: Int = 1, pageSize: Int = 10): UserPage!
+}
+
+type UserPage {
+  items: [User!]!
+  pageInfo: PageInfo!
+}
+
+type CountryPage {
+  items: [Country!]!
+  pageInfo: PageInfo!
+}
+
+type UserStats {
+  total: Int!
+  countries: Int!
+  bySource: [Bucket!]!
+  byGender: [Bucket!]!
+  "Топ стран по числу пользователей"
+  byCountry(limit: Int = 10): [Bucket!]!
+}

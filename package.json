@@ -1,0 +1,25 @@
+{
+  "name": "graphql-federation-lab5",
+  "version": "1.0.0",
+  "description": "ЛР5 СПП: клиент-серверное приложение на GraphQL Federation",
+  "type": "module",
+  "scripts": {
+    "start": "node start.js",
+    "collect": "node collector/collect.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@apollo/composition": "^2.14.4",
+    "@apollo/gateway": "^2.14.4",
+    "@apollo/server": "^5.5.2",
+    "@apollo/subgraph": "^2.16.0",
+    "@as-integrations/express5": "^1.1.2",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "graphql": "^16.15.0",
+    "prom-client": "^15.1.3"
+  }
+}

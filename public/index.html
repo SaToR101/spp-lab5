@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GraphQL Explorer — ЛР5</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%97%88%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>GraphQL Explorer</h1>
+    <nav id="tabs">
+      <button data-tab="users" class="active">Пользователи</button>
+      <button data-tab="posts">Посты</button>
+      <button data-tab="countries">Страны</button>
+      <button data-tab="stats">Статистика</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="users" class="tab active">
+      <form class="filters">
+        <input name="search" placeholder="Поиск: имя, email, город" />
+        <select name="source">
+          <option value="">Все источники</option>
+          <option>RANDOMUSER</option><option>DUMMYJSON</option><option>JSONPLACEHOLDER</option><option>LOCAL</option>
+        </select>
+        <select name="gender"><option value="">Любой пол</option><option value="MALE">Мужской</option><option value="FEMALE">Женский</option></select>
+        <select name="countryCode"><option value="">Все страны</option></select>
+        <input name="minAge" type="number" placeholder="Возраст от" min="0" />
+        <input name="maxAge" type="number" placeholder="до" min="0" />
+        <select name="sort"><option value="NAME">По имени</option><option value="AGE">По возрасту</option><option value="REGISTERED_AT">По дате регистрации</option></select>
+        <select name="dir"><option value="ASC">↑ возр.</option><option value="DESC">↓ убыв.</option></select>
+        <fieldset>
+          <legend>Вложенные данные (запрос строится динамически)</legend>
+          <label><input type="checkbox" name="withCountry" checked /> страна</label>
+          <label><input type="checkbox" name="withPosts" /> посты</label>
+          <label><input type="checkbox" name="withComments" /> комментарии к постам</label>
+        </fieldset>
+      </form>
+      <details class="create">
+        <summary>+ Новый пользователь</summary>
+        <form id="createUser">
+          <input name="firstName" placeholder="Имя" required />
+          <input name="lastName" placeholder="Фамилия" required />
+          <input name="email" type="email" placeholder="Email" required />
+          <input name="age" type="number" placeholder="Возраст" min="0" max="150" />
+          <input name="countryCode" placeholder="Код страны (BY)" maxlength="2" />
+          <button>Создать</button>
+        </form>
+      </details>
+      <div class="list"></div>
+      <div class="pager"></div>
+    </section>
+
+    <section id="posts" class="tab">
+      <form class="filters">
+        <input name="search" placeholder="Поиск: заголовок, текст, теги" />
+        <select name="source"><option value="">Все источники</option><option>DUMMYJSON</option><option>JSONPLACEHOLDER</option><option>LOCAL</option></select>
+        <select name="kind"><option value="">Посты и цитаты</option><option value="POST">Только посты</option><option value="QUOTE">Только цитаты</option></select>
+        <select name="tag"><option value="">Все теги</option></select>
+        <input name="minLikes" type="number" placeholder="Лайков от" min="0" />
+        <select name="sort"><option value="LIKES">По лайкам</option><option value="VIEWS">По просмотрам</option><option value="COMMENTS">По комментариям</option><option value="TITLE">По заголовку</option></select>
+        <select name="dir"><option value="DESC">↓ убыв.</option><option value="ASC">↑ возр.</option></select>
+        <fieldset>
+          <legend>Вложенные данные (директивы @include)</legend>
+          <label><input type="checkbox" name="withAuthor" checked /> автор и его страна</label>
+          <label><input type="checkbox" name="withComments" /> комментарии</label>
+        </fieldset>
+      </form>
+      <details class="create">
+        <summary>+ Новый пост</summary>
+        <form id="createPost">
+          <input name="title" placeholder="Заголовок" required maxlength="200" />
+          <input name="tags" placeholder="Теги через запятую" />
+          <input name="authorId" placeholder="ID автора" value="jp-1" required />
+          <textarea name="body" placeholder="Текст" required maxlength="5000"></textarea>
+          <button>Опубликовать</button>
+        </form>
+      </details>
+      <div class="list"></div>
+      <div class="pager"></div>
+    </section>
+
+    <section id="countries" class="tab">
+      <form class="filters">
+        <input name="search" placeholder="Поиск: страна, столица, код" />
+        <select name="region"><option value="">Все регионы</option></select>
+        <select name="sort"><option value="NAME">По названию</option><option value="AREA">По площади</option><option value="USERS">По числу пользователей</option></select>
+        <select name="dir"><option value="ASC">↑ возр.</option><option value="DESC">↓ убыв.</option></select>
+        <fieldset>
+          <legend>Вложенные данные</legend>
+          <label><input type="checkbox" name="withUsers" /> пользователи страны и их посты</label>
+        </fieldset>
+      </form>
+      <div class="list"></div>
+      <div class="pager"></div>
+    </section>
+
+    <section id="stats" class="tab"><div class="list"></div></section>
+  </main>
+
+  <aside id="debug">
+    <h2>Последний GraphQL-запрос <span id="debugMeta"></span></h2>
+    <div id="errors"></div>
+    <pre id="debugQuery"></pre>
+    <pre id="debugVars"></pre>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>

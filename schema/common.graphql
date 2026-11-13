@@ -1,0 +1,31 @@
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@shareable"])
+
+"Откуда собраны данные"
+enum Source {
+  RANDOMUSER
+  DUMMYJSON
+  JSONPLACEHOLDER
+  MLEDOZE
+  LOCAL
+}
+
+enum SortDir {
+  ASC
+  DESC
+}
+
+"Информация о странице результатов"
+type PageInfo @shareable {
+  total: Int!
+  page: Int!
+  pageSize: Int!
+  totalPages: Int!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+}
+
+"Элемент статистики: значение и количество"
+type Bucket @shareable {
+  key: String!
+  count: Int!
+}
